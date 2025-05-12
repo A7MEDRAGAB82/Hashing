@@ -22,8 +22,7 @@ class LinearProbing implements Hashtable {
     public void linearProbing(ArrayList<String> array) {
         long hashFnRes;
 
-        for (int j = 0; j < array.size() ; j++) {
-            String word = array.get(j);
+        for (String word : array) {
 
             if (!hashTable.contains(null)) {
                 System.out.println("Cannot insert " + word + " because hash table is full");
@@ -33,8 +32,8 @@ class LinearProbing implements Hashtable {
             String lCWord = word.toLowerCase();
             int n = word.length();
             long sumAscii = 0;
-            int i = 0;
 
+            int i = 0;
             for (char letter : lCWord.toCharArray()) {
                 sumAscii += (long) (letter * Math.pow(b, (n - 1 - i)));
                 i++;
@@ -42,7 +41,6 @@ class LinearProbing implements Hashtable {
 
             hashFnRes = (sumAscii % m) % hashTable.size();
             int c = 0;
-
             if (hashTable.get((int) hashFnRes) == null) {
                 hashTable.set((int) hashFnRes, word);
                 this.collisionTimes.add(word + ": " + c);
@@ -50,7 +48,6 @@ class LinearProbing implements Hashtable {
                 while (hashTable.get((int) hashFnRes) != null) {
                     collisionMap.putIfAbsent(word, new ArrayList<>());
                     collisionMap.get(word).add((int) hashFnRes);
-
                     c++;
                     totalCollisions++;
                     hashFnRes = (hashFnRes + 1) % hashTable.size();
@@ -65,7 +62,7 @@ class LinearProbing implements Hashtable {
     @Override
     public String printTableStructure() {
         System.out.println("Total collisions: " + totalCollisions);
-        System.out.println("Total collision for every word: " + collisionTimes);
+        System.out.println("Total collisions for every word: " + collisionTimes);
         System.out.println("Collisions indices for every word:");
 
         for (Map.Entry<String, List<Integer> > i : collisionMap.entrySet()) {
