@@ -2,50 +2,67 @@ import java.util.ArrayList;
 
 public class DoubleProbing {
 
-    private ArrayList<Character> hashTable;
+    private ArrayList<String> hashTable;
+    private final int tableSize = 52;
+
     public DoubleProbing() {
-        hashTable = new ArrayList<>(52);
-        for (int i = 0; i < 52; i++) {
+        hashTable = new ArrayList<>(tableSize);
+        for (int i = 0; i < tableSize; i++) {
             hashTable.add(null);
         }
     }
 
+    private int hashFunctionH(String key) {
+        int b = 31;
+        int m = 1000000009;
+        int n = key.length();
+        long hash = 0;
 
-        public void doubleHashInsert(String key) {
-            int tableSize = hashTable.size();
+        for (int j = 0; j < n; j++) {
+            int charValue = (int) key.charAt(j);
+            long power = 1;
 
-            if (tableSize == 0) {
-                System.out.println("Hash table is not initialized");
+            // Compute b^(n-1-j) % m using modular exponentiation
+            for (int p = 0; p < n - 1 - j; p++) {
+                power = (power * b) % m;
+            }
+
+            hash = (hash + (charValue * power) % m) % m;
+        }
+
+        return (int) hash;
+    }
+
+    public void doubleHashInsert(String key) {
+        key = key.toLowerCase();
+
+        int H = hashFunctionH(key);
+        int h1 = H % tableSize;
+        int h2 = 97 - (H % 97);
+
+        for (int j = 0; j < tableSize; j++) {
+            int newIndex = (h1 + j * h2) % tableSize;
+            if (hashTable.get(newIndex) == null) {
+                hashTable.set(newIndex, key);
                 return;
-            }
-
-            for (int i = 0; i < key.length(); i++) {
-                char currentChar = key.charAt(i);
-                int ascii = (int) currentChar;
-
-                int h1 = ascii % tableSize;
-                int h2 = 47 - (ascii % 47);
-
-                for (int j = 0; j < tableSize; j++) {
-                    int newIndex = (h1 + j * h2) % tableSize;
-
-                    if (hashTable.get(newIndex) == null) {
-                        hashTable.set(newIndex, currentChar);
-                        break;
-                    }
-                }
+            } else {
+                System.out.printf("Collision at index %d for \"%s\"\n", newIndex, key);
             }
         }
-        public  void printHashTable(ArrayList<Character> hashTable) {
-            System.out.println("Hash Table Contents:");
-            for (int i = 0; i < hashTable.size(); i++) {
-                Character value = hashTable.get(i);
-                if (value != null) {
-                    System.out.printf(" %d : %c \n", i, value);
-                }
-            }
-        }
-
+        System.out.printf("Failed to insert \"%s\" (Table is full)\n", key);
 
     }
 
+    public void printHashTable() {
+        System.out.println("\nHash Table Contents:");
+        for (int i = 0; i < tableSize; i++) {
+            String word = hashTable.get(i);
+            if (word != null) {
+                System.out.printf("%d : %s\n", i, word);
+            }
+        }
+    }
+
+   
+
+}
