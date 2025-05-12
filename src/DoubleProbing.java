@@ -1,12 +1,17 @@
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class DoubleProbing {
 
     private ArrayList<String> hashTable;
-    private final int tableSize = 52;
+    private final int tableSize;
+    private int collision;
 
-    public DoubleProbing() {
+    public DoubleProbing(int tableSize) {  
+        this.tableSize = tableSize;
+
         hashTable = new ArrayList<>(tableSize);
+        collision = 0;
         for (int i = 0; i < tableSize; i++) {
             hashTable.add(null);
         }
@@ -47,10 +52,10 @@ public class DoubleProbing {
                 return;
             } else {
                 System.out.printf("Collision at index %d for \"%s\"\n", newIndex, key);
+                collision++;
             }
         }
         System.out.printf("Failed to insert \"%s\" (Table is full)\n", key);
-
     }
 
     public void printHashTable() {
@@ -61,8 +66,18 @@ public class DoubleProbing {
                 System.out.printf("%d : %s\n", i, word);
             }
         }
+        System.out.printf("Total Collisions: %d\n", collision);
+        System.out.printf("Table Size: %d\n", tableSize);
+
     }
 
-   
+    public static void main(String[] args) {
+        DoubleProbing hashTable = new DoubleProbing(52);
+        hashTable.doubleHashInsert("Hello");
+        hashTable.doubleHashInsert("World");
+        hashTable.doubleHashInsert("Test");
+        hashTable.doubleHashInsert("Hash");
+        hashTable.printHashTable();
+    }
 
 }
